@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#define FILAS 4
-#define COLUMNAS 5
+#define FILAS 100
+#define COLUMNAS 101
 
 using namespace std;
 
@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	double m[FILAS][COLUMNAS];
 	double a[FILAS][COLUMNAS];
 	double b[FILAS];
-	int filas = 4, columnas = 5;
+	int filas = 100, columnas = 101;
 	fileReader(m, &filas, &columnas);
 	matrizA(a,m,filas, columnas);
 	matrizB(b,m,filas, columnas);
@@ -65,18 +65,29 @@ void fileReader (double m[FILAS][COLUMNAS],int* filas, int* columnas){
 			fila++;
 		}
 	}
-	
 	fclose(fp);
 	fp = fopen("data.txt","r");
-	
 	int i, j;
-	for(i = 0; i < fila; i++) {
+	double valor;
+	// Leemos los datos directamente con fscanf
+	while (fscanf(fp, "%lf", &valor) != EOF) {
+		m[fila][columna] = valor;
+		j++;
+		
+		// Si se alcanza el final de una línea (nueva línea), reiniciamos la columna y pasamos a la siguiente fila
+		c = fgetc(fp);
+		if (c == '\n') {
+			fila++;
+			j = 0;
+		}
+	}
+	/*for(i = 0; i < fila; i++) {
 		j = 0;
 		do {
 			fscanf(fp, "%lf", &(m[i][j]));
 			j++;
 		} while((c = fgetc(fp)) != '\n');
-	}
+	}*/
 	columna = j;
 	*columnas = columna;
 	*filas = fila;

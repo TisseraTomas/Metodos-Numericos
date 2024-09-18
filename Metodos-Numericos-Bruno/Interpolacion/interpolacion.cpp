@@ -19,13 +19,13 @@ double determinante(double a[FILAS][FILAS], double b[FILAS], double x[FILAS], in
 
 double func (double x){
 	
-	return x + 2/x;
+	return 0.999996*exp(pow(x,2)-1.99997);
 }
 
 	
 int main(int argc, char *argv[]) {
 	double m[FILAS][2];
-	int filas; 
+	int filas= 4; 
 	fileReader(m,&filas);
 	int seleccion;
 	printf("\ncantidad de filas %d\n",filas);
@@ -53,7 +53,6 @@ int main(int argc, char *argv[]) {
 
 
 void fileReader (double m[FILAS][2],int* filas){
-	
 	
 	FILE *fp;
 	char c;
@@ -99,7 +98,7 @@ void lagrange (double m[FILAS][2], int fila){
 		double producto = 1;
 		for (int j = 0; j < fila; j++) {
 			if (j != i) {
-				producto *= ((x - m[i][0]) / (m[j][0] - m[i][0]));
+				producto *= ((x - m[j][0]) / (m[i][0] - m[j][0]));
 			}
 		}
 		sum += m[i][1] * producto;

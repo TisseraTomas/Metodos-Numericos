@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#define FILAS 20
-#define COLUMNAS 20
+#define FILAS 100
+#define COLUMNAS 101
 
 using namespace std;
 
@@ -11,7 +11,7 @@ void matrizA (double a[FILAS][COLUMNAS], double m[FILAS][COLUMNAS], int filas, i
 void matrizB (double b[FILAS], double m[FILAS][COLUMNAS], int filas, int columnas);
 
 // Función para triangular matriz
-void triangulacion(double a[FILAS][COLUMNAS], double b[FILAS], double x[FILAS], int filas);
+void triangulacion(double a[FILAS][COLUMNAS], double b[FILAS], double x[FILAS], int filas, int columnas);
 
 //Funcion para retrostutituir matriz
 void retrostutitucion(double a[FILAS][COLUMNAS], double b[FILAS], double x[FILAS], int filas);
@@ -27,19 +27,51 @@ int main(int argc, char* argv[])
 	double m[FILAS][COLUMNAS];
 	double a[FILAS][COLUMNAS];
 	double b[FILAS];
-	int filas = 0, columnas = 0;
+	int filas = 100, columnas = 101;
 	fileReader(m, &filas, &columnas);
 	matrizA(a,m,filas, columnas);
 	matrizB(b,m,filas, columnas);
 	
 	// Llamar a la función eliminacionGaussiana --> la llamo triangulacion
 	double* x = (double*)malloc(filas * sizeof(double));
-	triangulacion(a, b, x, filas);
+	triangulacion(a, b, x, filas, columnas);
 	
 }
 
-
-void fileReader (double m[FILAS][COLUMNAS],int* filas, int* columnas){
+void fileReader(double m[FILAS][COLUMNAS], int* filas, int* columnas) {
+	FILE *fp;
+	fp = fopen("data.txt", "r");
+	if (fp == NULL) {
+		printf("No se puede abrir el archivo\n");
+		return;
+	}
+	
+	int fila = 0, columna = 0;
+	int max_columnas = 0;
+	double valor;
+	
+	// Leemos el archivo línea por línea y número por número
+	while (fscanf(fp, "%lf", &valor) != EOF) {
+		m[fila][columna] = valor;
+		columna++;
+		
+		// Si encontramos un salto de línea, avanzamos a la siguiente fila
+		char next_char = fgetc(fp);
+		if (next_char == '\n' || next_char == EOF) {
+			fila++;
+			if (columna > max_columnas) {
+				max_columnas = columna;  // Actualizamos el máximo de columnas
+			}
+			columna = 0;  // Reiniciamos las columnas para la siguiente fila
+		}
+	}
+	
+	fclose(fp);
+	
+	*filas = fila;
+	*columnas = max_columnas;
+}
+/*void fileReader (double m[FILAS][COLUMNAS],int* filas, int* columnas){
 
 	FILE *fp;
 	char c;
@@ -64,15 +96,17 @@ void fileReader (double m[FILAS][COLUMNAS],int* filas, int* columnas){
 	for(i = 0; i < fila; i++) {
 		j = 0;
 		do {
-			fscanf(fp, "%lf", &(m[i][j]));
+			c= fscanf(fp, "%lf", &(m[i][j]));
 			j++;
+			printf("%d", j);
 		} while((c = fgetc(fp)) != '\n');
+		printf("%d", j);
 	}
 	columna = j;
 	*columnas = columna;
 	*filas = fila;
 	
-}
+}*/
 void matrizA (double a[FILAS][COLUMNAS],double m[FILAS][COLUMNAS], int filas, int columnas){
 	for(int i = 0 ; i < filas ; i++){
 		for (int j = 0 ; j < columnas - 1 ; j++){
@@ -88,12 +122,12 @@ void matrizB (double b[FILAS],double m[FILAS][COLUMNAS], int filas, int columnas
 	}
 	
 }
-void triangulacion(double a[FILAS][COLUMNAS], double b[FILAS], double x[FILAS], int filas){
+void triangulacion(double a[FILAS][COLUMNAS], double b[FILAS], double x[FILAS], int filas, int columnas){
 	for (int i = 0 ; i < (filas - 1) ; i++){
 		pivot(a, b, filas , i);
 		for (int j = i + 1; j < filas; j++) {
 			double factor = -a[j][i] / a[i][i];
-			for (int k = 0; k < filas; ++k) {
+			for (int k = 0; k < columnas /*filas*/; ++k) {
 				a[j][k] = a[i][k] * factor + a[j][k];
 			}
 			b[j] = b[i] * factor + b[j];

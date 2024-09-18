@@ -14,10 +14,10 @@ int main (){
 }
 	
 double f(double x){
-	return pow(x, x) - 5;////
+	return 2*x + log(x) - sin(3*x);////
 }
 double fPrima(double x, double h){
-	return (f(x+h)-f(x-h))/(2*h);////
+	return (3*f(x)-4*f(x-h)+ f(x-2*h))/(2*h);////
 }
 void NewtonRaphson(){
 	double xViejo , error , tolerancia , xNuevo;
@@ -42,7 +42,7 @@ void NewtonRaphson(){
 	}while(error > tolerancia && contador < 10000 );
 	
 	printf("\n\n\nLa raiz de f es: %.12f", xNuevo);
-	printf("\n\n\nLa raiz de f es: %.101f", xNuevo);
+	//printf("\n\n\nLa raiz de f es: %.101f", xNuevo);
 	printf("\nEl valor del error en la raiz es de: %.10lf", error);
 	printf("\nLa resolucion del problema toma %d iteraciones", contador);
 }				
